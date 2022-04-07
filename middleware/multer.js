@@ -16,9 +16,9 @@ const imageType = function (req, file, cb) {
 };
 
 cloudinary.config({
-    cloud_name: "dcamukk7a",
-    api_key: "573375933639265",
-    api_secret: "DjD6QZ0jqVI4eJ8bJadcx66IaRc",
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.CLOUD_API_KEY,
+    api_secret: process.env.CLOUD_API_SECRET,
 });
 
 const upload = multer({ storage: storage, fileFilter: imageType });

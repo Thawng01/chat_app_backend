@@ -1,4 +1,5 @@
 require("express-async-errors");
+require("dotenv").config();
 const { createServer } = require("http");
 const express = require("express");
 const app = express();
@@ -20,7 +21,7 @@ const io = new Server(httpServer, {
 
 app.use(express.json());
 app.use(cors());
-app.use("/api/user", user);
+app.use("/api/user", user(io));
 app.use("/api/auth", auth);
 app.use("/api/conversation", conversation);
 app.use("/api/message", message(io));
