@@ -4,6 +4,7 @@ const Joi = require("joi");
 const bcrypt = require("bcrypt");
 const _ = require("lodash");
 const { User } = require("../model/user");
+const auth = require("../middleware/auth");
 
 router.post("/", async (req, res) => {
     const { error } = validate(req.body);
@@ -31,15 +32,11 @@ function validate(input) {
     return schema.validate(input);
 }
 
-router.get("/me/:id", async (req, res) => {
-    try {
-        const me = await User.findById(req.params.id).select(
-            "username avatar blocks joinedAt"
-        );
-        res.status(200).send(me);
-    } catch (error) {
-        console.log(error);
-    }
+router.get("/me/:id", auth, async (req, res) => {
+    const me = await User.findById(req.params.id).select(
+        "username avatar blocks joinedAt"
+    );
+    res.status(200).send(me);
 });
 
 module.exports = router;

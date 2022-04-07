@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 
 const messageSchema = new mongoose.Schema({
     message: String,
-    image: String,
     sentAt: { type: Date, default: Date.now },
     sender: {
         type: mongoose.Schema.Types.ObjectId,

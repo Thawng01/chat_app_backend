@@ -7,19 +7,15 @@ const auth = require("../middleware/auth");
 router.get("/:id", async (req, res) => {
     const { id } = req.params;
 
-    try {
-        const conversation = await Conversation.find().or([
-            { sender: id },
-            { receiver: id },
-        ]);
+    const conversation = await Conversation.find().or([
+        { sender: id },
+        { receiver: id },
+    ]);
 
-        res.status(200).send(conversation);
-    } catch (error) {
-        console.log(error);
-    }
+    res.status(200).send(conversation);
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
     const { id } = req.params;
     await Message.deleteMany({ conversation_id: id });
 
