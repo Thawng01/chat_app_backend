@@ -1,3 +1,5 @@
+const Joi = require("joi");
+Joi.objectId = require("joi-objectid")(Joi);
 const mongoose = require("mongoose");
 
 const messageSchema = new mongoose.Schema({
@@ -20,4 +22,14 @@ const messageSchema = new mongoose.Schema({
 
 const Message = mongoose.model("message", messageSchema);
 
+const validate = (input) => {
+    const schema = Joi.object({
+        sender: Joi.objectId().required(),
+        receiver: Joi.objectId().required(),
+    });
+
+    return schema.validate(input);
+};
+
 module.exports.Message = Message;
+module.exports.validate = validate;
