@@ -7,6 +7,8 @@ const httpServer = createServer(app);
 const { Server } = require("socket.io");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const helmet = require("helmet");
+const compression = require("compression");
 const user = require("./routes/user");
 const auth = require("./routes/auth");
 const conversation = require("./routes/conversation");
@@ -21,6 +23,8 @@ const io = new Server(httpServer, {
 
 app.use(express.json());
 app.use(cors());
+app.use(helmet());
+app.use(compression());
 app.use("/api/user", user(io));
 app.use("/api/auth", auth);
 app.use("/api/conversation", conversation);
