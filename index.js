@@ -17,7 +17,7 @@ const error = require("./middleware/error");
 
 const io = new Server(httpServer, {
     cors: {
-        origin: "http://localhost:3000",
+        origin: "https://react-chat-app-js.netlify.app",
     },
 });
 
