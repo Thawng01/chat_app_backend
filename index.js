@@ -31,9 +31,13 @@ app.use("/api/conversation", conversation);
 app.use("/api/message", message(io));
 app.use(error);
 
-mongoose.connect("mongodb://localhost/chat", () =>
-    console.log("connected to mongodb")
-);
+const url =
+    "mongodb://thawng:QwN1VRr3Vbxdjym1@chat-shard-00-00.4kmf6.mongodb.net:27017,chat-shard-00-01.4kmf6.mongodb.net:27017,chat-shard-00-02.4kmf6.mongodb.net:27017/chats?ssl=true&replicaSet=atlas-o3c7wl-shard-0&authSource=admin&retryWrites=true&w=majority";
+
+mongoose
+    .connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log("Connected to mongodb"))
+    .catch((err) => console.log(err));
 
 const port = process.env.PORT || 9000;
 httpServer.listen(port, () => console.log(`Listening to port: ${port}`));
