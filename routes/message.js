@@ -21,9 +21,9 @@ module.exports = function (io) {
         socket.on("addUser", (userId) => {
             addUser(userId, socket.id);
         });
+
         socket.on("disconnect", () => {
             removeUser(socket.id);
-            io.emit("getUsers", users);
         });
     });
 
@@ -36,7 +36,6 @@ module.exports = function (io) {
 
         const conv = await createConv(sender, receiver);
 
-        const user = users.find((u) => u.userId === receiver);
         const m = await createMessageOrImage(
             message,
             sender,
@@ -44,7 +43,10 @@ module.exports = function (io) {
             conv._id
         );
 
-        io.to(user.socketId).emit("getMessage", m);
+        const user2 = users.find((u) => u.userId === receiver);
+        const user1 = users.find((u) => u.userId === sender);
+
+        io.in([user2.socketId, user1.socketId]).emit("getMessage", m);
         res.status(201).send();
     });
 
@@ -70,8 +72,9 @@ module.exports = function (io) {
                 conversation._id
             );
 
-            const user = users.find((u) => u.userId === receiver);
-            io.to(user.socketId).emit("getMessage", m);
+            const user2 = users.find((u) => u.userId === receiver);
+            const user1 = users.find((u) => u.userId === sender);
+            io.in([user2.socketId, user1.socketId]).emit("getMessage", m);
 
             res.status(201).send();
         });
