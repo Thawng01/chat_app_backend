@@ -7,12 +7,12 @@ const messageSchema = new mongoose.Schema({
     sentAt: { type: Date, default: Date.now },
     sender: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "user",
+        ref: "users",
     },
 
     receiver: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "user",
+        ref: "users",
     },
 
     conversation_id: { type: mongoose.Schema.Types.ObjectId },
@@ -20,7 +20,7 @@ const messageSchema = new mongoose.Schema({
     read: { type: Boolean, default: false },
 });
 
-const Message = mongoose.model("message", messageSchema);
+const Message = mongoose.model("messages", messageSchema);
 
 const validate = (input) => {
     const schema = Joi.object({

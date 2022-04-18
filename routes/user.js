@@ -75,9 +75,7 @@ module.exports = function (io) {
             user.blocks.push(id);
         }
         await user.save();
-
         io.emit("updateUser", user);
-
         res.status(200).send();
     });
 
@@ -113,7 +111,7 @@ module.exports = function (io) {
         };
 
         await user.save();
-        io.emit("updateUserInfo", updatedUser);
+        io.emit("updateUser", updatedUser);
         res.status(200).send();
     });
 
@@ -132,7 +130,10 @@ module.exports = function (io) {
 
             user.avatar = result.secure_url;
             await user.save();
+            io.emit("updateUser", user);
+            res.status(200).send();
         });
     });
+
     return router;
 };

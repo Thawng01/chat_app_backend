@@ -7,23 +7,13 @@ const upload = require("../middleware/multer");
 const cloudinary = require("cloudinary");
 
 module.exports = function (io) {
-    // store user id and socked id in array
-    let users = [];
-    const addUser = (userId, socketId) => {
-        if (!users.some((user) => user.userId === userId)) {
-            users.push({ userId, socketId });
-        }
-    };
-    const removeUser = (socketId) => {
-        users = users.filter((u) => u.socketId !== socketId);
-    };
-    io.on("connect", (socket) => {
-        socket.on("addUser", (userId) => {
-            addUser(userId, socket.id);
-        });
+    // store socket id and user id in users array
+    const users = [];
 
-        socket.on("disconnect", () => {
-            removeUser(socket.id);
+    io.on("connection", (socket) => {
+        socket.on("createRoom", (data) => {
+            const user = users.find((u) => u.userId === data.userId);
+            if (!user) users.push({ userId: data.userId, socketId: socket.id });
         });
     });
 
@@ -43,10 +33,7 @@ module.exports = function (io) {
             conv._id
         );
 
-        const user2 = users.find((u) => u.userId === receiver);
-        const user1 = users.find((u) => u.userId === sender);
-
-        io.in([user2.socketId, user1.socketId]).emit("getMessage", m);
+        sendWithSocket(m, sender, receiver);
         res.status(201).send();
     });
 
@@ -72,13 +59,17 @@ module.exports = function (io) {
                 conversation._id
             );
 
-            const user2 = users.find((u) => u.userId === receiver);
-            const user1 = users.find((u) => u.userId === sender);
-            io.in([user2.socketId, user1.socketId]).emit("getMessage", m);
-
+            sendWithSocket(m, sender, receiver);
             res.status(201).send();
         });
     });
+
+    // send with socket
+    function sendWithSocket(m, sender, receiver) {
+        const user1 = users.find((u) => u.userId === sender);
+        const user2 = users.find((u) => u.userId === receiver);
+        io.to([user1?.socketId, user2?.socketId]).emit("getMessage", m);
+    }
 
     // fetch the lastest message by conversation id
     router.get("/:id/:me", async (req, res) => {
@@ -184,5 +175,6 @@ module.exports = function (io) {
         await m.save();
         return m;
     }
+
     return router;
 };
